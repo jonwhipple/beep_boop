@@ -17,7 +17,13 @@ defmodule BeepBoopWeb.Router do
   scope "/", BeepBoopWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", ConversionLive.Index, :new
+    live "/conversions", ConversionLive.Index, :index
+    live "/conversions/new", ConversionLive.Index, :new
+    live "/conversions/:id/edit", ConversionLive.Index, :edit
+
+    live "/conversions/:id", ConversionLive.Show, :show
+    live "/conversions/:id/show/edit", ConversionLive.Show, :edit
   end
 
   # Other scopes may use custom stacks.

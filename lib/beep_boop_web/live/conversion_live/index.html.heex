@@ -1,0 +1,43 @@
+<.header>
+  Listing Conversions
+  <:actions>
+    <.link patch={~p"/conversions/new"}>
+      <.button>New Conversion</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<.table
+  id="conversions"
+  rows={@streams.conversions}
+  row_click={fn {_id, conversion} -> JS.navigate(~p"/conversions/#{conversion}") end}
+>
+  <:col :let={{_id, conversion}} label="Input"><%= conversion.input %></:col>
+  <:col :let={{_id, conversion}} label="Binary"><%= conversion.binary %></:col>
+  <:col :let={{_id, conversion}} label="Markdown"><%= conversion.markdown %></:col>
+  <:action :let={{_id, conversion}}>
+    <div class="sr-only">
+      <.link navigate={~p"/conversions/#{conversion}"}>Show</.link>
+    </div>
+    <.link patch={~p"/conversions/#{conversion}/edit"}>Edit</.link>
+  </:action>
+  <:action :let={{id, conversion}}>
+    <.link
+      phx-click={JS.push("delete", value: %{id: conversion.id}) |> hide("##{id}")}
+      data-confirm="Are you sure?"
+    >
+      Delete
+    </.link>
+  </:action>
+</.table>
+
+<.modal :if={@live_action in [:new, :edit]} id="conversion-modal" show on_cancel={JS.patch(~p"/conversions")}>
+  <.live_component
+    module={BeepBoopWeb.ConversionLive.FormComponent}
+    id={@conversion.id || :new}
+    title={@page_title}
+    action={@live_action}
+    conversion={@conversion}
+    patch={~p"/conversions"}
+  />
+</.modal>
